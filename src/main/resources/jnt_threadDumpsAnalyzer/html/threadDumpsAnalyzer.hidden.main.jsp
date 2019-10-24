@@ -24,27 +24,30 @@
 <%--@elvariable id="thread" type="org.jahia.modules.serverperfanalyzer.threadumps.ThreadWrapper"--%>
 
 <template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js"/>
-<template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css"/>
+<template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css,serverPerfs.css"/>
 
 <h2><fmt:message key="label.threadDumpsAnalyzer.availableFiles"/></h2>
+<ul class="availableFiles">
 <c:forEach items="${fileContents}" var="file" varStatus="status">
     <c:url var="detailsURL" value="${url.edit}">
         <c:param name="file" value="${status.index}"/>
     </c:url>
     <c:if test="${(empty param.file and status.first) or param.file eq status.index}">
-        <c:set var="linkStyle"> style="font-size: larger"</c:set>
+        <c:set var="linkStyle"> class="selectedFile"</c:set>
     </c:if>
     <li><a href="${detailsURL}" ${linkStyle}>${file.key}</a></li>
+    <c:remove var="linkStyle" />
 </c:forEach>
+</ul>
 
 <c:choose>
     <c:when test="${empty param.page}">
         <c:set var="pagerBegin" value="0" />
-        <c:set var="pagerEnd" value="9" />
+        <c:set var="pagerEnd" value="4" />
     </c:when>
     <c:otherwise>
         <c:set var="pagerBegin" value="${param.page*10}" />
-        <c:set var="pagerEnd" value="${param.page*10 + 9}" />
+        <c:set var="pagerEnd" value="${param.page*10 + 4}" />
     </c:otherwise>
 </c:choose>
 
@@ -63,8 +66,8 @@
                 <div id="accordion-${currentNode.identifier}-${status.count}">
                     <c:forEach items="${tdump.threadsByStackLenght}" var="thread">
                         <c:choose>
-                                <c:set var="length"> <span style="color: red">(stack length:${fn:length(threadEntry.value.stack)})</span></c:set>
                             <c:when test="${fn:length(thread.stack) ge 20}">
+                                <c:set var="length"> <span class="runningThread">(stack length:${fn:length(thread.stack)})</span></c:set>
                             </c:when>
                             <c:otherwise>
                                 <c:set var="length"> (stack length:${fn:length(thread.stack)})</c:set>

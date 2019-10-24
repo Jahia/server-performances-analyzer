@@ -1,0 +1,12 @@
+.availableFiles .selectedFile {
+    font-size: larger;
+    font-weight: bold;
+}
+
+.stacktrace {
+    padding-left: 25px;
+}
+
+.runningThread {
+    color: red;
+}

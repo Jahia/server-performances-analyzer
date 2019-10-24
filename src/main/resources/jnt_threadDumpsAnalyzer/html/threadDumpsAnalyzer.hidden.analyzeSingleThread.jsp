@@ -24,7 +24,7 @@
 <%--@elvariable id="thread" type="org.jahia.modules.serverperfanalyzer.threadumps.ThreadWrapper"--%>
 
 <template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js"/>
-<template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css"/>
+<template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css,serverPerfs.css"/>
 
 <c:forEach items="${fileContents}" var="file" begin="${param.file}" end="${param.file}">
     <div id="accordion-${currentNode.identifier}">
@@ -32,8 +32,8 @@
             <c:forEach items="${tdump.threads}" var="thread">
                 <c:if test="${thread.nid eq param.nid}">
                     <c:choose>
-                            <c:set var="length"> <span style="color: red">(stack length:${fn:length(threadEntry.value.stack)})</span></c:set>
                         <c:when test="${fn:length(thread.stack) ge 20}">
+                            <c:set var="length"> <span class="runningThread">(stack length:${fn:length(thread.stack)})</span></c:set>
                         </c:when>
                         <c:otherwise>
                             <c:set var="length"> (stack length:${fn:length(thread.stack)})</c:set>
