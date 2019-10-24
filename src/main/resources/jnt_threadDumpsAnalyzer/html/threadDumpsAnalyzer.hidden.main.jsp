@@ -80,7 +80,7 @@
                                 <c:param name="nid" value="${thread.nid}" />
                                 <c:param name="td" value="${status.count}" />
                             </c:url>
-                            <a href="${analyzeURL}" target="_blank">"${thread.name}" nid=${thread.nid} state=${thread.state} []</a><br/>
+                            <a href="${analyzeURL}" target="_blank" class="threadDetails">"${thread.name}" nid=${thread.nid} state=${thread.state} []</a><br/>
                             ${thread.extendedState}<br/>
                             <div class="stacktrace">
                                 <c:forEach items="${thread.stack}" var="stackLine" begin="0" end="9">

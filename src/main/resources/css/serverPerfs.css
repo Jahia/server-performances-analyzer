@@ -10,3 +10,7 @@
 .runningThread {
     color: red;
 }
+
+a.threadDetails {
+    color: #06c;
+}

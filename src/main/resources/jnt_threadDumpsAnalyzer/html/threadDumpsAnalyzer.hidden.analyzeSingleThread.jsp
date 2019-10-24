@@ -33,7 +33,7 @@
                 <c:if test="${thread.nid eq param.nid}">
                     <c:choose>
                         <c:when test="${fn:length(thread.stack) ge longThreadThreshold}">
-                            <c:set var="length"> <span class="runningThread">(stack length:${fn:length(thread.stack)})</span></c:set>
+                            <c:set var="length"> <span class="runningThread"> (stack length:${fn:length(thread.stack)})</span></c:set>
                         </c:when>
                         <c:otherwise>
                             <c:set var="length"> (stack length:${fn:length(thread.stack)})</c:set>
@@ -44,8 +44,9 @@
                         <c:url var="analyzeURL" value="${url.edit}">
                             <c:param name="file" value="${param.file}" />
                             <c:param name="nid" value="${thread.nid}" />
+                            <c:param name="td" value="${status.count}" />
                         </c:url>
-                        <a href="${analyzeURL}" target="_blank">"${thread.name}" nid=${thread.nid} state=${thread.state} []</a><br/>
+                        <a href="${analyzeURL}" target="_self" class="threadDetails">"${thread.name}" nid=${thread.nid} state=${thread.state} []</a><br/>
                             ${thread.extendedState}<br/>
                         <c:forEach items="${thread.stack}" var="stackLine">
                             &nbsp;&nbsp;&nbsp;&nbsp;${stackLine}<br/>
