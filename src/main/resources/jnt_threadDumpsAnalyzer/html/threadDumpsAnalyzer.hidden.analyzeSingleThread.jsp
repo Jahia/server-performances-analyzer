@@ -29,25 +29,25 @@
 <c:forEach items="${fileContents}" var="file" begin="${param.file}" end="${param.file}">
     <div id="accordion-${currentNode.identifier}">
     <c:forEach items="${file.value}" var="tdump" varStatus="status">
-            <c:forEach items="${tdump.threads}" var="threadEntry">
-                <c:if test="${threadEntry.value.nid eq param.nid}">
+            <c:forEach items="${tdump.threads}" var="thread">
+                <c:if test="${thread.nid eq param.nid}">
                     <c:choose>
-                        <c:when test="${fn:length(threadEntry.value.stack) ge 20}">
                             <c:set var="length"> <span style="color: red">(stack length:${fn:length(threadEntry.value.stack)})</span></c:set>
+                        <c:when test="${fn:length(thread.stack) ge 20}">
                         </c:when>
                         <c:otherwise>
-                            <c:set var="length"> (stack length:${fn:length(threadEntry.value.stack)})</c:set>
+                            <c:set var="length"> (stack length:${fn:length(thread.stack)})</c:set>
                         </c:otherwise>
                     </c:choose>
-                    <h3>${threadEntry.value.name} ${length}</h3>
+                    <h3>${thread.name} ${length}</h3>
                     <div>
                         <c:url var="analyzeURL" value="${url.edit}">
                             <c:param name="file" value="${param.file}" />
-                            <c:param name="nid" value="${threadEntry.value.nid}" />
+                            <c:param name="nid" value="${thread.nid}" />
                         </c:url>
-                        <a href="${analyzeURL}" target="_blank">"${threadEntry.value.name}" nid=${threadEntry.value.nid} state=${threadEntry.value.state} []</a><br/>
-                            ${threadEntry.value.extendedState}<br/>
-                        <c:forEach items="${threadEntry.value.stack}" var="stackLine">
+                        <a href="${analyzeURL}" target="_blank">"${thread.name}" nid=${thread.nid} state=${thread.state} []</a><br/>
+                            ${thread.extendedState}<br/>
+                        <c:forEach items="${thread.stack}" var="stackLine">
                             &nbsp;&nbsp;&nbsp;&nbsp;${stackLine}<br/>
                         </c:forEach>
                     </div>
