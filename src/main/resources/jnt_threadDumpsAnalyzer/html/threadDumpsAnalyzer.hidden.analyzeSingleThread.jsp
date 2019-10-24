@@ -32,14 +32,14 @@
             <c:forEach items="${tdump.threads}" var="thread">
                 <c:if test="${thread.nid eq param.nid}">
                     <c:choose>
-                        <c:when test="${fn:length(thread.stack) ge 20}">
+                        <c:when test="${fn:length(thread.stack) ge longThreadThreshold}">
                             <c:set var="length"> <span class="runningThread">(stack length:${fn:length(thread.stack)})</span></c:set>
                         </c:when>
                         <c:otherwise>
                             <c:set var="length"> (stack length:${fn:length(thread.stack)})</c:set>
                         </c:otherwise>
                     </c:choose>
-                    <h3>${thread.name} ${length}</h3>
+                    <h3>${thread.name} ${length} - Thread dump #${status.count}</h3>
                     <div>
                         <c:url var="analyzeURL" value="${url.edit}">
                             <c:param name="file" value="${param.file}" />
@@ -58,7 +58,13 @@
     <template:addResources>
         <script>
             jQuery(function () {
-                jQuery("#accordion-${currentNode.identifier}").accordion();
+                jQuery("#accordion-${currentNode.identifier}").accordion({
+                    <c:if test="${not empty param.td}">
+                    active: ${param.td -1},
+                    </c:if>
+                    collapsible: true,
+                    heightStyle: "content"
+                });
             });
         </script>
     </template:addResources>

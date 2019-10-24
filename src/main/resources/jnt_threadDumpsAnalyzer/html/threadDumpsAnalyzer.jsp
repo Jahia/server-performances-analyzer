@@ -23,6 +23,7 @@
 <%--@elvariable id="tdump" type="org.jahia.modules.serverperfanalyzer.threadumps.ThreadDumpWrapper"--%>
 <%--@elvariable id="thread" type="org.jahia.modules.serverperfanalyzer.threadumps.ThreadWrapper"--%>
 
+<c:set var="longThreadThreshold" value="30" scope="request" />
 <c:choose>
     <c:when test="${not empty param.nid}">
         <template:include view="hidden.analyzeSingleThread" />

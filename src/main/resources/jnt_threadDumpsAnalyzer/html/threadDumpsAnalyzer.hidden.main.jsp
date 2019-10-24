@@ -66,7 +66,7 @@
                 <div id="accordion-${currentNode.identifier}-${status.count}">
                     <c:forEach items="${tdump.threadsByStackLenght}" var="thread">
                         <c:choose>
-                            <c:when test="${fn:length(thread.stack) ge 20}">
+                            <c:when test="${fn:length(thread.stack) ge longThreadThreshold}">
                                 <c:set var="length"> <span class="runningThread">(stack length:${fn:length(thread.stack)})</span></c:set>
                             </c:when>
                             <c:otherwise>
@@ -78,6 +78,7 @@
                             <c:url var="analyzeURL" value="${url.edit}">
                                 <c:param name="file" value="${param.file}" />
                                 <c:param name="nid" value="${thread.nid}" />
+                                <c:param name="td" value="${status.count}" />
                             </c:url>
                             <a href="${analyzeURL}" target="_blank">"${thread.name}" nid=${thread.nid} state=${thread.state} []</a><br/>
                             ${thread.extendedState}<br/>
@@ -93,7 +94,10 @@
                 <template:addResources>
                 <script>
                     jQuery(function () {
-                        jQuery("#accordion-${currentNode.identifier}-${status.count}").accordion();
+                        jQuery("#accordion-${currentNode.identifier}-${status.count}").accordion({
+                            collapsible: true,
+                            heightStyle: "content"
+                        });
                     });
                 </script>
                 </template:addResources>
