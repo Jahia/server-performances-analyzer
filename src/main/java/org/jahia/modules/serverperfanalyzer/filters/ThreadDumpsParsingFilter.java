@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class ThreadDumpsParsingFilter extends AbstractFilter {
 
@@ -34,11 +34,11 @@ public class ThreadDumpsParsingFilter extends AbstractFilter {
             return super.prepare(renderContext, resource, chain);
         }
         final Collection<File> files = FileUtils.listFiles(threadsFolder, null, true);
-        chain.pushAttribute(renderContext.getRequest(), "availableFiles", files);
-        final Map<String, List<ThreadDumpWrapper>> fileContents = new HashMap<>();
+        final Map<String, List<ThreadDumpWrapper>> fileContents = new TreeMap<>();
         for (File file : files) {
-            fileContents.put(file.getParentFile().getName() + File.separator + file.getName(), ThreadDumpsParser.parse(file));
+            fileContents.put(file.getParentFile().getName() + '/' + file.getName(), ThreadDumpsParser.parse(file));
         }
+        chain.pushAttribute(renderContext.getRequest(), "availableFiles", fileContents.keySet());
         chain.pushAttribute(renderContext.getRequest(), "fileContents", fileContents);
 
         return super.prepare(renderContext, resource, chain);
