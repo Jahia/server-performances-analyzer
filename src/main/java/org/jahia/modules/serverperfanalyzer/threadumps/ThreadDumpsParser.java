@@ -66,7 +66,7 @@ public class ThreadDumpsParser {
         } catch (IOException e) {
             logger.error("Impossible to read the file", e);
         }
-        
+
         if (logger.isDebugEnabled())
             logger.debug(String.format("Parsed %s in %s", file.getPath(), DateUtils.formatDurationWords(Duration.between(start, Instant.now()).toMillis())));
 

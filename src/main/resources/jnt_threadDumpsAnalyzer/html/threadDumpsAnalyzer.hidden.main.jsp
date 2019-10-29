@@ -25,17 +25,45 @@
 
 <template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js"/>
 <template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css,serverPerfs.css"/>
+<c:set var="pageSize" value="10" />
 
 <h2><fmt:message key="label.threadDumpsAnalyzer.availableFiles"/></h2>
 <ul class="availableFiles">
 <c:forEach items="${fileContents}" var="file" varStatus="status">
-    <c:url var="detailsURL" value="${url.edit}">
-        <c:param name="file" value="${status.index}"/>
-    </c:url>
     <c:if test="${(empty param.file and status.first) or param.file eq status.index}">
         <c:set var="linkStyle"> class="selectedFile"</c:set>
     </c:if>
-    <li><a href="${detailsURL}" ${linkStyle}>${file.key}</a></li>
+    <c:choose>
+        <c:when test="${fn:length(file.value) le pageSize}">
+            <c:url var="detailsURL" value="${url.edit}">
+                <c:param name="file" value="${status.index}"/>
+            </c:url>
+            <li><a href="${detailsURL}" ${linkStyle}>${file.key}</a></li>
+        </c:when>
+        <c:otherwise>
+            <li>
+                <span>${file.key} (${fn:length(file.value)} threads)</span>
+                <ul>
+                <c:forEach begin="0" end="${fn:length(file.value)/pageSize-1}" varStatus="statusPages">
+                    <c:url var="detailsURL" value="${url.edit}">
+                        <c:param name="file" value="${status.index}"/>
+                        <c:param name="page" value="${statusPages.index}" />
+                    </c:url>
+                    <c:if test="${(empty param.file and status.first) or param.file eq status.index}">
+                        <c:set var="linkStyle"> class="selectedFile"</c:set>
+                    </c:if>
+                    <c:if test="${(empty param.file and status.first) or param.file eq status.index}">
+                        <c:if test="${(empty param.page and statusPages.first) or param.page eq statusPages.index}">
+                            <c:set var="linkPageStyle"> class="selectedFile"</c:set>
+                        </c:if>
+                    </c:if>
+                    <li><a href="${detailsURL}" ${linkPageStyle}>Thread dumps ${statusPages.index*pageSize+1} to ${statusPages.count * pageSize}</a></li>
+                    <c:remove var="linkPageStyle" />
+                </c:forEach>
+                </ul>
+            </li>
+        </c:otherwise>
+    </c:choose>
     <c:remove var="linkStyle" />
 </c:forEach>
 </ul>
@@ -43,11 +71,11 @@
 <c:choose>
     <c:when test="${empty param.page}">
         <c:set var="pagerBegin" value="0" />
-        <c:set var="pagerEnd" value="4" />
+        <c:set var="pagerEnd" value="${pageSize-1}" />
     </c:when>
     <c:otherwise>
-        <c:set var="pagerBegin" value="${param.page*10}" />
-        <c:set var="pagerEnd" value="${param.page*10 + 4}" />
+        <c:set var="pagerBegin" value="${param.page*pageSize}" />
+        <c:set var="pagerEnd" value="${param.page*pageSize + pageSize-1}" />
     </c:otherwise>
 </c:choose>
 
@@ -55,15 +83,17 @@
     <ul>
         <c:forEach items="${fileContents}" var="file" begin="${param.file}" end="${param.file}">
             <c:forEach items="${file.value}" var="tdump" varStatus="status" begin="${pagerBegin}" end="${pagerEnd}">
-                <li><a href="#tabs-${currentNode.identifier}-${status.count}" title="${tdump.date}">${status.count}</a>
+                <c:set var="tdumpIndex" value="${status.index+1}" />
+                <li><a href="#tabs-${currentNode.identifier}-${tdumpIndex}" title="${tdump.date}">${tdumpIndex}</a>
                 </li>
             </c:forEach>
         </c:forEach>
     </ul>
     <c:forEach items="${fileContents}" var="file" begin="${param.file}" end="${param.file}">
         <c:forEach items="${file.value}" var="tdump" varStatus="status" begin="${pagerBegin}" end="${pagerEnd}">
-            <div id="tabs-${currentNode.identifier}-${status.count}">
-                <div id="accordion-${currentNode.identifier}-${status.count}">
+            <c:set var="tdumpIndex" value="${status.index+1}" />
+            <div id="tabs-${currentNode.identifier}-${tdumpIndex}">
+                <div id="accordion-${currentNode.identifier}-${tdumpIndex}">
                     <c:forEach items="${tdump.threadsByStackLenght}" var="thread">
                         <c:choose>
                             <c:when test="${fn:length(thread.stack) ge longThreadThreshold}">
@@ -78,7 +108,7 @@
                             <c:url var="analyzeURL" value="${url.edit}">
                                 <c:param name="file" value="${param.file}" />
                                 <c:param name="nid" value="${thread.nid}" />
-                                <c:param name="td" value="${status.count}" />
+                                <c:param name="td" value="${tdumpIndex}" />
                             </c:url>
                             <a href="${analyzeURL}" target="_blank" class="threadDetails">"${thread.name}" nid=${thread.nid} state=${thread.state} []</a><br/>
                             ${thread.extendedState}<br/>
@@ -94,7 +124,7 @@
                 <template:addResources>
                 <script>
                     jQuery(function () {
-                        jQuery("#accordion-${currentNode.identifier}-${status.count}").accordion({
+                        jQuery("#accordion-${currentNode.identifier}-${tdumpIndex}").accordion({
                             collapsible: true,
                             heightStyle: "content"
                         });
