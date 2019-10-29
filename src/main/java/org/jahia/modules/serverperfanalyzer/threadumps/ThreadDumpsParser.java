@@ -2,11 +2,14 @@ package org.jahia.modules.serverperfanalyzer.threadumps;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jahia.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -18,6 +21,7 @@ public class ThreadDumpsParser {
     private static final String THREAD_HEADER = "\\W*\\\"(.+)\\\"\\W+nid=(\\d+)\\W+state=(.+)\\W+\\[\\]\\W*";
 
     public static List<ThreadDumpWrapper> parse(File file) {
+        final Instant start = Instant.now();
         final List<ThreadDumpWrapper> threadDumps = new ArrayList<>();
         try {
             final Pattern threadHeaderPattern = Pattern.compile(THREAD_HEADER);
@@ -62,6 +66,10 @@ public class ThreadDumpsParser {
         } catch (IOException e) {
             logger.error("Impossible to read the file", e);
         }
+        
+        if (logger.isDebugEnabled())
+            logger.debug(String.format("Parsed %s in %s", file.getPath(), DateUtils.formatDurationWords(Duration.between(start, Instant.now()).toMillis())));
+
         return threadDumps;
     }
 
