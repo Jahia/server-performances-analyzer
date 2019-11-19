@@ -20,6 +20,7 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="currentAliasUser" type="org.jahia.services.usermanager.JahiaUser"--%>
+<%--@elvariable id="file" type="org.jahia.modules.serverperfanalyzer.threadumps.ThreadDumpsFileWrapper"--%>
 <%--@elvariable id="tdump" type="org.jahia.modules.serverperfanalyzer.threadumps.ThreadDumpWrapper"--%>
 <%--@elvariable id="thread" type="org.jahia.modules.serverperfanalyzer.threadumps.ThreadWrapper"--%>
 
@@ -34,17 +35,17 @@
         <c:set var="linkStyle"> class="selectedFile"</c:set>
     </c:if>
     <c:choose>
-        <c:when test="${fn:length(file.value) le pageSize}">
+        <c:when test="${fn:length(file.threadDumps) le pageSize}">
             <c:url var="detailsURL" value="${url.edit}">
                 <c:param name="file" value="${status.index}"/>
             </c:url>
-            <li><a href="${detailsURL}" ${linkStyle}>${file.key}</a></li>
+            <li><a href="${detailsURL}" ${linkStyle}>${file.label}</a></li>
         </c:when>
         <c:otherwise>
             <li>
-                <span>${file.key} (${fn:length(file.value)} threads)</span>
+                <span>${file.label} (${fn:length(file.threadDumps)} threads)</span>
                 <ul>
-                <c:forEach begin="0" end="${fn:length(file.value)/pageSize-1}" varStatus="statusPages">
+                <c:forEach begin="0" end="${fn:length(file.threadDumps)/pageSize-1}" varStatus="statusPages">
                     <c:url var="detailsURL" value="${url.edit}">
                         <c:param name="file" value="${status.index}"/>
                         <c:param name="page" value="${statusPages.index}" />
@@ -82,7 +83,7 @@
 <div id="tabs-${currentNode.identifier}">
     <ul>
         <c:forEach items="${fileContents}" var="file" begin="${param.file}" end="${param.file}">
-            <c:forEach items="${file.value}" var="tdump" varStatus="status" begin="${pagerBegin}" end="${pagerEnd}">
+            <c:forEach items="${file.threadDumps}" var="tdump" varStatus="status" begin="${pagerBegin}" end="${pagerEnd}">
                 <c:set var="tdumpIndex" value="${status.index+1}" />
                 <li><a href="#tabs-${currentNode.identifier}-${tdumpIndex}" title="${tdump.date}">${tdumpIndex}</a>
                 </li>
@@ -90,7 +91,7 @@
         </c:forEach>
     </ul>
     <c:forEach items="${fileContents}" var="file" begin="${param.file}" end="${param.file}">
-        <c:forEach items="${file.value}" var="tdump" varStatus="status" begin="${pagerBegin}" end="${pagerEnd}">
+        <c:forEach items="${file.threadDumps}" var="tdump" varStatus="status" begin="${pagerBegin}" end="${pagerEnd}">
             <c:set var="tdumpIndex" value="${status.index+1}" />
             <div id="tabs-${currentNode.identifier}-${tdumpIndex}">
                 <div id="accordion-${currentNode.identifier}-${tdumpIndex}">

@@ -20,6 +20,7 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <%--@elvariable id="currentUser" type="org.jahia.services.usermanager.JahiaUser"--%>
 <%--@elvariable id="currentAliasUser" type="org.jahia.services.usermanager.JahiaUser"--%>
+<%--@elvariable id="file" type="org.jahia.modules.serverperfanalyzer.threadumps.ThreadDumpsFileWrapper"--%>
 <%--@elvariable id="tdump" type="org.jahia.modules.serverperfanalyzer.threadumps.ThreadDumpWrapper"--%>
 <%--@elvariable id="thread" type="org.jahia.modules.serverperfanalyzer.threadumps.ThreadWrapper"--%>
 
@@ -27,9 +28,9 @@
 <template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css,serverPerfs.css"/>
 
 <c:forEach items="${fileContents}" var="file" begin="${param.file}" end="${param.file}">
-    <h3>${file.key}</h3>
+    <h3>${file.label}</h3>
     <div id="accordion-${currentNode.identifier}">
-    <c:forEach items="${file.value}" var="tdump" varStatus="status">
+    <c:forEach items="${file.threadDumps}" var="tdump" varStatus="status">
             <c:forEach items="${tdump.threads}" var="thread">
                 <c:if test="${thread.nid eq param.nid}">
                     <c:choose>

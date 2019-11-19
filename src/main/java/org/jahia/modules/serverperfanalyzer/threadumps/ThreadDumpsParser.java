@@ -20,7 +20,7 @@ public class ThreadDumpsParser {
     private static final Logger logger = LoggerFactory.getLogger(ThreadDumpsParser.class);
     private static final String THREAD_HEADER = "\\W*\\\"(.+)\\\"\\W+nid=(\\d+)\\W+state=(.+)\\W+\\[\\]\\W*";
 
-    public static List<ThreadDumpWrapper> parse(File file) {
+    public static ThreadDumpsFileWrapper parse(File file) {
         final Instant start = Instant.now();
         final List<ThreadDumpWrapper> threadDumps = new ArrayList<>();
         try {
@@ -70,7 +70,8 @@ public class ThreadDumpsParser {
         if (logger.isDebugEnabled())
             logger.debug(String.format("Parsed %s in %s", file.getPath(), DateUtils.formatDurationWords(Duration.between(start, Instant.now()).toMillis())));
 
-        return threadDumps;
+
+        return new ThreadDumpsFileWrapper(threadDumps, start);
     }
 
 }
