@@ -1,6 +1,5 @@
 package org.jahia.modules.serverperfanalyzer.threadumps;
 
-
 import org.apache.commons.io.FileUtils;
 import org.jahia.utils.DateUtils;
 import org.slf4j.Logger;
@@ -48,14 +47,20 @@ public class ThreadDumpsService {
         for (File file : files) {
             final String path = file.getPath();
             if (!threadDumps.containsKey(path)) {
-                final ThreadDumpsFileWrapper parsedFile = ThreadDumpsParser.parse(file);
-                parsedFile.setLabel(file.getParentFile().getName() + '/' + file.getName());
-                threadDumps.put(path, parsedFile);
-                logger.info(String.format("Loaded %s", parsedFile.getLabel()));
+                logger.info(String.format("Loaded %s", parse(file).getLabel()));
+            } else if (file.lastModified() > threadDumps.get(path).getParsingDate().toEpochMilli()) {
+                logger.info(String.format("Reloaded %s as it has been modified since the last time it was parsed", parse(file).getLabel()));
             }
         }
 
         if (logger.isDebugEnabled())
             logger.debug(String.format("Refreshed the thread dumps from the file system in %s", DateUtils.formatDurationWords(Duration.between(start, Instant.now()).toMillis())));
+    }
+
+    private ThreadDumpsFileWrapper parse(File file) {
+        final ThreadDumpsFileWrapper parsedFile = ThreadDumpsParser.parse(file);
+        parsedFile.setLabel(file.getParentFile().getName() + '/' + file.getName());
+        threadDumps.put(file.getPath(), parsedFile);
+        return parsedFile;
     }
 }

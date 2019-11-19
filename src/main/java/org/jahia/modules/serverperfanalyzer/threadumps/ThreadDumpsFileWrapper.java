@@ -24,6 +24,10 @@ public class ThreadDumpsFileWrapper {
         return threadDumps;
     }
 
+    public Instant getParsingDate() {
+        return parsingDate;
+    }
+
     public String getLabel() {
         return label;
     }
