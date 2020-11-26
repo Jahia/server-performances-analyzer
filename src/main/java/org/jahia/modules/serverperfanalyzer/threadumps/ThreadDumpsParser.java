@@ -52,7 +52,8 @@ public class ThreadDumpsParser {
                         currentTD.setDesc(line);
                         continue;
                     }
-                    logger.error("Don't know what to do with this line {}", line);
+                    if (logger.isDebugEnabled())
+                        logger.debug("Don't know what to do with this line {}", line);
                 }
 
                 if (currentThread != null) {
@@ -60,7 +61,8 @@ public class ThreadDumpsParser {
                     else currentThread.appendToStack(line);
                     continue;
                 }
-                logger.error("Don't know what to do with this line {}", line);
+                if (logger.isDebugEnabled())
+                    logger.debug("Don't know what to do with this line {}", line);
             }
 
         } catch (IOException e) {

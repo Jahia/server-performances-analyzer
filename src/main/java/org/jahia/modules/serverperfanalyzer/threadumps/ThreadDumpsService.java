@@ -1,6 +1,7 @@
 package org.jahia.modules.serverperfanalyzer.threadumps;
 
 import org.apache.commons.io.FileUtils;
+import org.jahia.settings.SettingsBean;
 import org.jahia.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,9 +9,15 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class ThreadDumpsService {
 
@@ -53,6 +60,39 @@ public class ThreadDumpsService {
             }
         }
 
+        if (useLabFeatures()) {
+            // if the jahia-threads folder doesn't exist, this line can't be reached (TODO fixme)
+            final File jahiaErrorsFolder = new File(logsFolder, "jahia-errors");
+            final Instant jahiaErrorsParsingStart = Instant.now();
+            if (jahiaErrorsFolder.exists()) {
+                final Collection<File> errorFiles = FileUtils.listFiles(jahiaErrorsFolder, null, true);
+                final Map<String, Set<ThreadDumpsFileWrapper>> parsedFiles = new HashMap<>();
+                for (File errorFile : errorFiles) {
+                    final ThreadDumpsFileWrapper parsedFile = ThreadDumpsParser.parse(errorFile);
+                    for (ThreadDumpWrapper threadDump : parsedFile.getThreadDumps()) {
+                        // TODO would be much better to fix that in the parser itself
+                        threadDump.setDate(errorFile.getName());
+                    }
+                    parsedFile.setLabel(errorFile.getName());
+                    final String folder = errorFile.getParentFile().getName();
+                    if (!parsedFiles.containsKey(folder))
+                        parsedFiles.put(folder, new TreeSet<>(Comparator.comparing(ThreadDumpsFileWrapper::getLabel)));
+                    parsedFiles.get(folder).add(parsedFile);
+                }
+                for (String folder : parsedFiles.keySet()) {
+                    final List<ThreadDumpWrapper> tdOfTheDay = new ArrayList<>();
+                    final Set<ThreadDumpsFileWrapper> threadDumpsFileWrappers = parsedFiles.get(folder);
+                    for (ThreadDumpsFileWrapper threadDumps : threadDumpsFileWrappers) {
+                        tdOfTheDay.addAll(threadDumps.getThreadDumps());
+                    }
+                    final ThreadDumpsFileWrapper tdOfTheDayWrapper = new ThreadDumpsFileWrapper(tdOfTheDay, jahiaErrorsParsingStart);
+                    tdOfTheDayWrapper.setLabel("jahia-errors/" + folder);
+                    threadDumps.put("jahia-errors/" + folder, tdOfTheDayWrapper);
+                }
+
+            }
+        }
+
         if (logger.isDebugEnabled())
             logger.debug(String.format("Refreshed the thread dumps from the file system in %s", DateUtils.formatDurationWords(Duration.between(start, Instant.now()).toMillis())));
     }
@@ -62,5 +102,17 @@ public class ThreadDumpsService {
         parsedFile.setLabel(file.getParentFile().getName() + '/' + file.getName());
         threadDumps.put(file.getPath(), parsedFile);
         return parsedFile;
+    }
+
+    /**
+     * Enables features which are not production ready, or not "state of the art" developed
+     *
+     * @return
+     */
+    private boolean useLabFeatures() {
+        final String property = System.getProperty("modules.serverPerfsAnalyzer.devMode");
+        if (property != null) return Boolean.parseBoolean(property);
+
+        return Boolean.parseBoolean(SettingsBean.getInstance().getPropertiesFile().getProperty("modules.serverPerfsAnalyzer.devMode"));
     }
 }
