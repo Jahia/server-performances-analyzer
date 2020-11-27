@@ -12,8 +12,8 @@
          <templates j:rootTemplatePath="/base" jcr:primaryType="jnt:templatesFolder">
             <files jcr:primaryType="jnt:folder"/>
             <contents jcr:primaryType="jnt:contentFolder"/>
-            <site-settings-base j:view="siteSettings" jcr:primaryType="jnt:template">
-               <threadDumpsAnalyzer-panel j:applyOn="jnt:virtualsite"
+            <server-settings-base j:view="serverSettings" jcr:primaryType="jnt:template">
+               <threadDumpsAnalyzer-panel j:applyOn="jnt:globalSettings"
                                           j:requiredPermissionNames="threadDumpsAnalyzer"
                                           j:titleKey="threadDumpsAnalyzer.panel.title"
                                           jcr:mixinTypes="jmix:rbTitle"
@@ -22,7 +22,7 @@
                      <threaddumpsanalyzer jcr:primaryType="jnt:threadDumpsAnalyzer"/>
                   </pagecontent>
                </threadDumpsAnalyzer-panel>
-            </site-settings-base>
+            </server-settings-base>
          </templates>
       </server-performances-analyzer>
    </modules>

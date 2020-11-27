@@ -64,7 +64,6 @@
     <properties>
         <jahia-depends>default</jahia-depends>
         <jahia-module-type>system</jahia-module-type>
-        <jahia-deploy-on-site>all</jahia-deploy-on-site>
     </properties>
 
     <scm>
