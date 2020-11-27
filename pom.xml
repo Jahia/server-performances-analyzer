@@ -57,9 +57,15 @@
     <groupId>org.jahia.modules</groupId>
     <artifactId>server-performances-analyzer</artifactId>
     <name>Server performances analyzer</name>
-    <version>1.0-SNAPSHOT</version>    
+    <version>1.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>This is the custom module (Server performances analyzer) for running on a Digital Experience Manager server.</description>
+
+    <properties>
+        <jahia-depends>default</jahia-depends>
+        <jahia-module-type>system</jahia-module-type>
+        <jahia-deploy-on-site>all</jahia-deploy-on-site>
+    </properties>
 
     <scm>
         <connection>scm:dummy:uri</connection>
@@ -80,19 +86,4 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Jahia-Depends>default</Jahia-Depends>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

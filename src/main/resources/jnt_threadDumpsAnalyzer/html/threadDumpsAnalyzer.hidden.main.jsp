@@ -27,6 +27,7 @@
 <template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js"/>
 <template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css,serverPerfs.css"/>
 <c:set var="pageSize" value="10" />
+<c:set var="currentPageURL" value="${url.base}${renderContext.mainResource.path}" />
 
 <h2><fmt:message key="label.threadDumpsAnalyzer.availableFiles"/></h2>
 <ul class="availableFiles">
@@ -36,7 +37,7 @@
     </c:if>
     <c:choose>
         <c:when test="${fn:length(file.threadDumps) le pageSize}">
-            <c:url var="detailsURL" value="${url.edit}">
+            <c:url var="detailsURL" value="${currentPageURL}">
                 <c:param name="file" value="${status.index}"/>
             </c:url>
             <li><a href="${detailsURL}" ${linkStyle}>${file.label}</a></li>
@@ -46,7 +47,7 @@
                 <span>${file.label} (${fn:length(file.threadDumps)} threads)</span>
                 <ul>
                 <c:forEach begin="0" end="${fn:length(file.threadDumps)/pageSize-1}" varStatus="statusPages">
-                    <c:url var="detailsURL" value="${url.edit}">
+                    <c:url var="detailsURL" value="${currentPageURL}">
                         <c:param name="file" value="${status.index}"/>
                         <c:param name="page" value="${statusPages.index}" />
                     </c:url>
@@ -106,7 +107,7 @@
                         </c:choose>
                         <h3>${thread.name} ${length}</h3>
                         <div>
-                            <c:url var="analyzeURL" value="${url.edit}">
+                            <c:url var="analyzeURL" value="${currentPageURL}">
                                 <c:param name="file" value="${param.file}" />
                                 <c:param name="nid" value="${thread.nid}" />
                                 <c:param name="td" value="${tdumpIndex}" />

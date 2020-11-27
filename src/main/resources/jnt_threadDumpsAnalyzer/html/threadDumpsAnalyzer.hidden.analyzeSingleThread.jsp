@@ -26,6 +26,7 @@
 
 <template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js"/>
 <template:addResources type="css" resources="jquery-ui.smoothness.css,jquery-ui.smoothness-jahia.css,serverPerfs.css"/>
+<c:set var="currentPageURL" value="${url.base}${renderContext.mainResource.path}" />
 
 <c:forEach items="${fileContents}" var="file" begin="${param.file}" end="${param.file}">
     <h3>${file.label}</h3>
@@ -43,7 +44,7 @@
                     </c:choose>
                     <h3>${thread.name} ${length} - Thread dump #${status.count}</h3>
                     <div>
-                        <c:url var="analyzeURL" value="${url.edit}">
+                        <c:url var="analyzeURL" value="${currentPageURL}">
                             <c:param name="file" value="${param.file}" />
                             <c:param name="nid" value="${thread.nid}" />
                             <c:param name="td" value="${status.count}" />
